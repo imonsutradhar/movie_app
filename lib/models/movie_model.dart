@@ -3,6 +3,7 @@ class MovieModel {
   final String title;
   final String overview;
   final String posterPath;
+  final String backdropPath;
   final double rating;
   final String releaseDate;
 
@@ -11,6 +12,7 @@ class MovieModel {
     required this.title,
     required this.overview,
     required this.posterPath,
+    required this.backdropPath,
     required this.rating,
     required this.releaseDate,
   });
@@ -21,6 +23,7 @@ class MovieModel {
       title: json['title'] as String? ?? 'Unknown',
       overview: json['overview'] as String? ?? 'No description available',
       posterPath: json['poster_path'] as String? ?? '',
+      backdropPath: json['backdrop_path'] as String? ?? '',
       rating: (json['vote_average'] as num? ?? 0.0).toDouble(),
       releaseDate: json['release_date'] as String? ?? 'Unknown',
     );
