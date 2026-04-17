@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movie_server_app/screens/profile_screen.dart';
 import 'package:movie_server_app/screens/search_screen.dart';
 import 'home_screen.dart';
 
@@ -15,7 +16,7 @@ class _MainWrapperState extends State<MainWrapper> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const SearchScreen(),
-    const Center(child: Text("Profile Screen", style: TextStyle(fontSize: 25))),
+    const ProfileScreen(),
   ];
 
   @override

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/login_screen.dart'; // Login screen ta import korlam
+import 'screens/login_screen.dart';
+import 'screens/main_wrapper.dart';
 
 void main() {
   runApp(const MovieApp());
@@ -13,11 +14,15 @@ class MovieApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Movie Box',
+
       theme: ThemeData(
+        brightness: Brightness.dark,
+        scaffoldBackgroundColor: const Color(0xFF0F1115),
         primarySwatch: Colors.red,
         useMaterial3: true,
       ),
-      home: LoginScreen(),
+
+      home:  LoginScreen(),
     );
   }
 }

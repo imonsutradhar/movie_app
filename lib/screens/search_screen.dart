@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:movie_server_app/screens/movie_details_screen.dart';
+import '../models/movie_model.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({super.key});
@@ -17,7 +19,6 @@ class SearchScreen extends StatelessWidget {
               const Text("Explore Movies", style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
 
               const SizedBox(height: 20),
-              // search bar
               TextField(
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
@@ -25,7 +26,7 @@ class SearchScreen extends StatelessWidget {
                   hintStyle: TextStyle(color: Colors.white38),
                   prefixIcon: const Icon(Icons.search, color: Colors.redAccent),
                   filled: true,
-                  fillColor: Colors.white.withOpacity(0.05),
+                  fillColor: Colors.white.withValues(alpha: 0.05),
                   contentPadding: EdgeInsets.symmetric(vertical: 15),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -35,7 +36,7 @@ class SearchScreen extends StatelessWidget {
               ),
 
               const SizedBox(height: 25),
-              // category list
+
               SizedBox(
                 height: 45,
                 child: ListView(
@@ -59,14 +60,22 @@ class SearchScreen extends StatelessWidget {
                     mainAxisSpacing: 15,
                     childAspectRatio: 0.7,
                   ),
-                  itemCount: 6,
+                  itemCount: dummyMovies.length,
                   itemBuilder: (context, index) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(15),
-                        image: const DecorationImage(
-                          image: NetworkImage("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoBbV1cm1zPYG83x9vhcuLqS7zoD8Al52Bu-lGNIBk_q2r2yD3sOxV_oZwerMbBwZXVfse8Q&s=10"),
-                          fit: BoxFit.cover
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MovieDetailsScreen(movie: dummyMovies[index])),
+                        );
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          image: DecorationImage(
+                            image: NetworkImage(dummyMovies[index].posterUrl),
+                            fit: BoxFit.cover
+                          ),
                         ),
                       ),
                     );
@@ -86,7 +95,7 @@ class SearchScreen extends StatelessWidget {
       alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(horizontal: 20),
       decoration: BoxDecoration(
-        color: isSelected ? Colors.redAccent : Colors.white.withOpacity(0.1),
+        color: isSelected ? Colors.redAccent : Colors.white.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(

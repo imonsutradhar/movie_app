@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'movie_details_screen.dart';
-
 import '../models/movie_model.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -42,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                         stops: const [0.3, 0.7, 1.0],
                         colors: [
                           Colors.transparent,
-                          const Color(0xFF0F1115).withOpacity(0.4),
+                          const Color(0xFF0F1115).withValues(alpha: 0.4),
                           const Color(0xFF0F1115),
                         ],
                       ),
@@ -142,7 +141,7 @@ class HomeScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.15),
+        color: Colors.white.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(

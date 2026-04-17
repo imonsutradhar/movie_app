@@ -55,7 +55,7 @@ class SignupScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.redAccent.withOpacity(0.4),
+                        color: Colors.redAccent.withValues(alpha: 0.4),
                         blurRadius: 15,
                         offset: const Offset(0, 5),
                       ),
