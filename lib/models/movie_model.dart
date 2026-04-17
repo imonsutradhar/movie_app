@@ -1,31 +1,37 @@
 class MovieModel {
-  final int id;
   final String title;
+  final String posterUrl;
+  final String rating;
+  final String year;
+  final String duration;
   final String overview;
-  final String posterPath;
-  final String backdropPath;
-  final double rating;
-  final String releaseDate;
 
-  const MovieModel({
-    required this.id,
+  MovieModel({
     required this.title,
-    required this.overview,
-    required this.posterPath,
-    required this.backdropPath,
+    required this.posterUrl,
     required this.rating,
-    required this.releaseDate,
+    required this.year,
+    required this.duration,
+    required this.overview,
   });
-
-  factory MovieModel.fromJson(Map<String, dynamic> json) {
-    return MovieModel(
-      id: json['id'] as int,
-      title: json['title'] as String? ?? 'Unknown',
-      overview: json['overview'] as String? ?? 'No description available',
-      posterPath: json['poster_path'] as String? ?? '',
-      backdropPath: json['backdrop_path'] as String? ?? '',
-      rating: (json['vote_average'] as num? ?? 0.0).toDouble(),
-      releaseDate: json['release_date'] as String? ?? 'Unknown',
-    );
-  }
 }
+
+
+List<MovieModel> dummyMovies = [
+  MovieModel(
+    title: "The Batman",
+    posterUrl: "https://m.media-amazon.com/images/M/MV5BMmU5NGJlMzAtMGNmOC00YjJjLTgyMzUtNjAyYmE4Njg5YWMyXkEyXkFqcGc@._V1_.jpg",
+    rating: "8.5",
+    year: "2022",
+    duration: "2h 56m",
+    overview: "In his second year of fighting crime, Batman uncovers corruption in Gotham City...",
+  ),
+  MovieModel(
+    title: "Spider-Man",
+    posterUrl: "https://upload.wikimedia.org/wikipedia/en/e/e1/Spider-Man_PS4_cover.jpg",
+    rating: "8.3",
+    year: "2021",
+    duration: "2h 28m",
+    overview: "With Spider-Man's identity now revealed, Peter asks Doctor Strange for help...",
+  ),
+];

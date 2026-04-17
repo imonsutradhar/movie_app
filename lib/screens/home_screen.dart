@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'movie_details_screen.dart';
+
+import '../models/movie_model.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -11,71 +14,80 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. Featured Movie Poster with Proper Gradient
-            Stack(
-              children: [
-                Container(
-                  height: 550,
-                  width: double.infinity,
-                  child: Image.network(
-                    "https://assets-prd.ignimgs.com/2022/01/26/thebatman-newbutton-1643232430643.jpg",
-                    fit: BoxFit.cover,
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) =>  MovieDetailsScreen(movie: dummyMovies[0])),
+                );
+              },
+              child: Stack(
+                children: [
+                  Container(
+                    height: 550,
+                    width: double.infinity,
+                    child: Image.network(
+                      dummyMovies[0].posterUrl,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                // Gradient Overlay - Adjusted for better visibility
-                Container(
-                  height: 550,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      stops: const [0.3, 0.7, 1.0],
-                      colors: [
-                        Colors.transparent,
-                        const Color(0xFF0F1115).withOpacity(0.4),
-                        const Color(0xFF0F1115),
+
+
+                  Container(
+                    height: 550,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        stops: const [0.3, 0.7, 1.0],
+                        colors: [
+                          Colors.transparent,
+                          const Color(0xFF0F1115).withOpacity(0.4),
+                          const Color(0xFF0F1115),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  Positioned(
+                    bottom: 30,
+                    left: 20,
+                    right: 20,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          dummyMovies[0].title,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 35,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            _buildTag(dummyMovies[0].year),
+                            const SizedBox(width: 10),
+                            _buildTag("Action"),
+                            const SizedBox(width: 10),
+                            const Icon(Icons.star, color: Colors.amber, size: 20),
+                            Text(
+                              dummyMovies[0].rating,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-                ),
-
-                Positioned(
-                  bottom: 30,
-                  left: 20,
-                  right: 20,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "The Batman",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 35,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 1.2,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        children: [
-                          _buildTag("2022"),
-                          const SizedBox(width: 10),
-                          _buildTag("Action"),
-                          const SizedBox(width: 10),
-                          const Icon(Icons.star, color: Colors.amber, size: 20),
-                          const Text(
-                            " 8.5",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
 
             const Padding(
@@ -95,18 +107,24 @@ class HomeScreen extends StatelessWidget {
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.only(left: 20),
-                itemCount: 5,
+                itemCount: dummyMovies.length,
                 itemBuilder: (context, index) {
-                  return Container(
-                    width: 150,
-                    margin: const EdgeInsets.only(right: 15),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      image: const DecorationImage(
-                        image: NetworkImage(
-                          "https://preview.redd.it/avengers-doomsday-poster-featuring-the-confirmed-cast-so-v0-b8a68egs9n2f1.jpeg?width=640&crop=smart&auto=webp&s=6ee560e53f9d0b265abdf63d48ace4964d3c4555",
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) =>  MovieDetailsScreen(movie: dummyMovies[index])),
+                      );
+                    },
+                    child: Container(
+                      width: 150,
+                      margin: const EdgeInsets.only(right: 15),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(15),
+                        image: DecorationImage(
+                          image: NetworkImage(dummyMovies[index].posterUrl),
+                          fit: BoxFit.cover,
                         ),
-                        fit: BoxFit.cover,
                       ),
                     ),
                   );
