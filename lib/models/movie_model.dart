@@ -6,6 +6,7 @@ class MovieModel {
   final String duration;
   final String overview;
   final int id;
+  final List<int> genreIds;
 
   MovieModel({
     required this.title,
@@ -15,6 +16,7 @@ class MovieModel {
     required this.duration,
     required this.overview,
     required this.id,
+    required this.genreIds,
   });
   factory MovieModel.fromJson(Map<String, dynamic> json) {
     return MovieModel(
@@ -27,28 +29,7 @@ class MovieModel {
           : 'N/A',
       duration: "N/A",
       overview: json['overview'] ?? 'No description available.',
+      genreIds: List<int>.from(json['genre_ids'] ?? []),
     );
   }
 }
-
-
-List<MovieModel> dummyMovies = [
-  MovieModel(
-    id: 1,
-    title: "The Batman",
-    posterUrl: "https://m.media-amazon.com/images/M/MV5BMmU5NGJlMzAtMGNmOC00YjJjLTgyMzUtNjAyYmE4Njg5YWMyXkEyXkFqcGc@._V1_.jpg",
-    rating: "8.5",
-    year: "2022",
-    duration: "2h 56m",
-    overview: "In his second year of fighting crime, Batman uncovers corruption in Gotham City...",
-  ),
-  MovieModel(
-    id: 2,
-    title: "Spider-Man",
-    posterUrl: "https://upload.wikimedia.org/wikipedia/en/e/e1/Spider-Man_PS4_cover.jpg",
-    rating: "8.3",
-    year: "2021",
-    duration: "2h 28m",
-    overview: "With Spider-Man's identity now revealed, Peter asks Doctor Strange for help...",
-  ),
-];
