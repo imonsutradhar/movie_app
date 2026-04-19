@@ -1,12 +1,16 @@
-import 'dart:collection';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
+import 'login_screen.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final User? user =FirebaseAuth.instance.currentUser;
+    final AuthService _authService = AuthService();
+
     return Scaffold(
       backgroundColor: Color(0xFF0F1115),
       body: SingleChildScrollView(
@@ -19,10 +23,12 @@ class ProfileScreen extends StatelessWidget {
                   Stack(
                     alignment: Alignment.bottomRight,
                     children: [
-                      const CircleAvatar(
+                      CircleAvatar(
                         radius: 60,
                         backgroundColor: Colors.white12,
-                        backgroundImage: NetworkImage("https://cdn-icons-png.flaticon.com/512/3135/3135715.png"),
+                        backgroundImage: user?.photoURL != null
+                          ? NetworkImage(user!.photoURL!)
+                          : NetworkImage("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
                       ),
                       Container(
                         height: 35,
@@ -37,11 +43,11 @@ class ProfileScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    "Imon Sutradhar",
+                    user?.displayName ?? "No Name",
                     style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    "imon@gmail.com",
+                    user?.email ?? "No Email",
                     style: TextStyle(color: Colors.white54, fontSize: 14),
                   ),
                 ],
@@ -61,7 +67,7 @@ class ProfileScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 40),
-            
+
             _buildListTile(Icons.favorite, "My Favourite"),
             _buildListTile(Icons.history, "Watch History"),
             _buildListTile(Icons.file_download, "Downloads"),
@@ -73,7 +79,16 @@ class ProfileScreen extends StatelessWidget {
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: ListTile(
-                onTap: () {},
+                onTap: () async {
+                  await _authService.signOut();
+                  if(context.mounted) {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (route) => false,
+                    );
+                  }
+                },
                 leading: Icon(Icons.logout, color: Colors.redAccent),
                 title: Text("Logout", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),

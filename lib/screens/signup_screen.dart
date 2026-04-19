@@ -1,12 +1,60 @@
 import 'package:flutter/material.dart';
 import '../widgets/custom_input.dart';
+import '../services/auth_service.dart';
+import 'main_wrapper.dart';
 
-class SignupScreen extends StatelessWidget {
-  SignupScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  final AuthService _authService = AuthService();
+  bool _isLoading = false;
+
+  void _handleSignUp() async {
+    String name = nameController.text.trim();
+    String email = emailController.text.trim();
+    String password = passwordController.text.trim();
+
+    if(name.isEmpty || email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Please fill all fields!")),
+      );
+      return;
+    }
+    if (password.length <6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Password must be at least 6 character")),
+      );
+    }
+    setState(() => _isLoading = true);
+    final user = await _authService.signUp(name, email, password);
+
+    if (mounted) {
+      setState(() => _isLoading =false);
+    }
+    if (user != null) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const MainWrapper()),
+          (route) => false,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Welcome to Movie Box, ${user.displayName}!")),
+      );
+    }
+    else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Signup failed! Email might be already in use")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,20 +110,22 @@ class SignupScreen extends StatelessWidget {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _isLoading ? null : _handleSignUp,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    child: Text(
+                    child: _isLoading
+                      ? const SizedBox(
+                        height:20,
+                        width: 20,
+                        child:  CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+                        )
+                      : const Text(
                       "Sign Up",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: TextStyle(color: Colors.white,fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),
