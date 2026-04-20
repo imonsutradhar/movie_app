@@ -20,7 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
       body: FutureBuilder<List<MovieModel>>(
         future: apiService.getTrendingMovies(),
         builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
               child: CircularProgressIndicator(color: Colors.redAccent),
             );
@@ -28,26 +28,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
           if (snapshot.hasError) {
             return Center(
-              child: Text("Error :${snapshot.error}", style: TextStyle(color: Colors.white)),
+              child: Text("Error :${snapshot.error}", style: const TextStyle(color: Colors.white)),
             );
           }
 
-          final movies =snapshot.data!;
+          final movies = snapshot.data!;
 
           return SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // --- Tomar Original Boro Poster (Hero Section) ---
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) =>  MovieDetailsScreen(movie: movies[0])),
+                      MaterialPageRoute(builder: (context) => MovieDetailsScreen(movie: movies[0])),
                     );
                   },
                   child: Stack(
                     children: [
-                      Container(
+                      SizedBox(
                         height: 550,
                         width: double.infinity,
                         child: Image.network(
@@ -55,8 +56,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           fit: BoxFit.cover,
                         ),
                       ),
-
-
                       Container(
                         height: 550,
                         decoration: BoxDecoration(
@@ -72,7 +71,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         ),
                       ),
-
                       Positioned(
                         bottom: 30,
                         left: 20,
@@ -82,14 +80,13 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             Text(
                               movies[0].title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 35,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1.2,
                               ),
                             ),
-
                             const SizedBox(height: 10),
                             Row(
                               children: [
@@ -101,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const SizedBox(width: 5),
                                 Text(
                                   movies[0].rating,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,
                                   ),
@@ -127,6 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
 
+                // --- Trending Now List with Clickable Heart ---
                 SizedBox(
                   height: 220,
                   child: ListView.builder(
@@ -138,19 +136,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) =>  MovieDetailsScreen(movie:movies[index])),
+                            MaterialPageRoute(builder: (context) => MovieDetailsScreen(movie: movies[index])),
                           );
                         },
-                        child: Container(
-                          width: 150,
-                          margin: const EdgeInsets.only(right: 15),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(15),
-                            image: DecorationImage(
-                              image: NetworkImage(movies[index].posterUrl),
-                              fit: BoxFit.cover,
+                        child: Stack(
+                          children: [
+                            Container(
+                              width: 150,
+                              margin: const EdgeInsets.only(right: 15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                  image: NetworkImage(movies[index].posterUrl),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
                             ),
-                          ),
+                          ],
                         ),
                       );
                     },

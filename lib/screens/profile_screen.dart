@@ -1,100 +1,185 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_server_app/services/database_service.dart';
 import '../services/auth_service.dart';
 import 'login_screen.dart';
+
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final User? user =FirebaseAuth.instance.currentUser;
+    final User? user = FirebaseAuth.instance.currentUser;
     final AuthService _authService = AuthService();
+    final DatabaseService _dbService = DatabaseService();
 
     return Scaffold(
-      backgroundColor: Color(0xFF0F1115),
+      backgroundColor: const Color(0xFF0F1115),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 70),
+            const SizedBox(height: 80),
+
+            // Profile Header Section
             Center(
               child: Column(
                 children: [
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      CircleAvatar(
-                        radius: 60,
-                        backgroundColor: Colors.white12,
-                        backgroundImage: user?.photoURL != null
+                  CircleAvatar(
+                    radius: 55,
+                    backgroundColor: Colors.redAccent.withOpacity(0.2),
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundImage: (user?.photoURL != null)
                           ? NetworkImage(user!.photoURL!)
-                          : NetworkImage("https://cdn-icons-png.flaticon.com/512/3135/3135715.png")
-                      ),
-                      Container(
-                        height: 35,
-                        width: 35,
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(Icons.edit, color: Colors.white, size: 20),
-                      ),
-                    ],
+                          : const NetworkImage("https://cdn-icons-png.flaticon.com/512/3135/3135715.png"),
+                    ),
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    user?.displayName ?? "No Name",
-                    style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+                    user?.displayName ?? "Movie Buff",
+                    style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    user?.email ?? "No Email",
-                    style: TextStyle(color: Colors.white54, fontSize: 14),
+                    user?.email ?? "user@gmail.com",
+                    style: const TextStyle(color: Colors.white38, fontSize: 14),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 40),
+
+            const SizedBox(height: 35),
+
+            // Stats Cards Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildStatItem("Favourites", "12"),
-                  _buildStatItem("Watched", "45"),
-                  _buildStatItem("Reviews", "8"),
-                ],
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1C1F26),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Favourites Real-time Count
+                    StreamBuilder<int>(
+                        stream: _dbService.getFavouriteCount(),
+                        builder: (context, snapshot) {
+                          String count = snapshot.data?.toString() ?? "0";
+                          return _buildStatItem("Favourites", count);
+                        }
+                    ),
+
+                    Container(
+                      height: 30,
+                      width: 1,
+                      color: Colors.white12,
+                    ),
+
+                    // Watchlist Real-time Count
+                    StreamBuilder<int>(
+                        stream: _dbService.getWatchlistCount(),
+                        builder: (context, snapshot) {
+                          String count = snapshot.data?.toString() ?? "0";
+                          return _buildStatItem("Watchlist", count);
+                        }
+                    ),
+                  ],
+                ),
               ),
             ),
 
-            const SizedBox(height: 40),
+            const SizedBox(height: 35),
 
-            _buildListTile(Icons.favorite, "My Favourite"),
-            _buildListTile(Icons.history, "Watch History"),
-            _buildListTile(Icons.file_download, "Downloads"),
-            _buildListTile(Icons.settings, "Settings"),
-            _buildListTile(Icons.help_outline, "Help & Support"),
+            _buildSectionHeader("Personal Activity"),
+
+            // My Favourite Tile
+            _buildMenuTile(
+              Icons.favorite,
+              "My Favourite",
+              Colors.redAccent,
+              onTap: () {
+                // TODO: Navigator push koro Favourite screen-e
+                print("Navigate to Favourites");
+              },
+            ),
+
+            // Watch List Tile
+            _buildMenuTile(
+              Icons.history,
+              "Watch List",
+              Colors.blueAccent,
+              onTap: () {
+                // TODO: Navigator push koro Watchlist screen-e
+                print("Navigate to Watchlist");
+              },
+            ),
 
             const SizedBox(height: 20),
 
+            _buildSectionHeader("Settings & Support"),
+            _buildMenuTile(
+              Icons.settings,
+              "Settings",
+              Colors.grey,
+              onTap: () {
+                print("Navigate to Settings");
+              },
+            ),
+
+            // Logout Button
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: ListTile(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+              child: InkWell(
                 onTap: () async {
                   await _authService.signOut();
                   if(context.mounted) {
                     Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()),
-                        (route) => false,
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                            (route) => false
                     );
                   }
                 },
-                leading: Icon(Icons.logout, color: Colors.redAccent),
-                title: Text("Logout", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.bold)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                child: Container(
+                  height: 55,
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(color: Colors.redAccent.withOpacity(0.3)),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      "Logout",
+                      style: TextStyle(color: Colors.redAccent, fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
               ),
             ),
+            const SizedBox(height: 20),
           ],
+        ),
+      ),
+    );
+  }
+
+  // --- Helper Widgets ---
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(25, 15, 25, 10),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+            title,
+            style: const TextStyle(
+                color: Colors.white54,
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.8
+            )
         ),
       ),
     );
@@ -103,22 +188,35 @@ class ProfileScreen extends StatelessWidget {
   Widget _buildStatItem(String label, String value) {
     return Column(
       children: [
-        Text(value, style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 5),
-        Text(label, style: TextStyle(color: Colors.white38, fontSize: 13)),
+        Text(
+            value,
+            style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)
+        ),
+        const SizedBox(height: 4),
+        Text(
+            label,
+            style: const TextStyle(color: Colors.white38, fontSize: 12)
+        ),
       ],
     );
   }
 
-  Widget _buildListTile(IconData icon, String tittle) {
+  Widget _buildMenuTile(IconData icon, String title, Color iconColor, {VoidCallback? onTap}) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 6),
       child: ListTile(
-        onTap: () {},
-        leading: Icon(icon, color: Colors.white70),
-        title: Text(tittle, style: TextStyle(color: Colors.white, fontSize: 16)),
-        trailing: Icon(Icons.arrow_forward_ios, color: Colors.white24, size: 16),
-        tileColor: Colors.white.withValues(alpha: 0.05),
+        onTap: onTap,
+        leading: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: iconColor.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Icon(icon, color: iconColor, size: 22),
+        ),
+        title: Text(title, style: const TextStyle(color: Colors.white, fontSize: 16)),
+        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white12, size: 14),
+        tileColor: const Color(0xFF1C1F26),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
     );

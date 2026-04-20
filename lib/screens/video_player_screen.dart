@@ -12,7 +12,7 @@ class VideoPlayerScreen extends StatelessWidget {
         controller: YoutubePlayerController(
           initialVideoId: videoId,
           flags: YoutubePlayerFlags(
-              autoPlay: true
+              autoPlay: true,
           ),
         ),
       ),
