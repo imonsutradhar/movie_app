@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:movie_server_app/screens/my_favourite_screen.dart';
 import 'package:movie_server_app/services/database_service.dart';
 import '../services/auth_service.dart';
 import 'login_screen.dart';
@@ -94,25 +95,25 @@ class ProfileScreen extends StatelessWidget {
 
             _buildSectionHeader("Personal Activity"),
 
-            // My Favourite Tile
+            //Favourite Tile
             _buildMenuTile(
               Icons.favorite,
               "My Favourite",
               Colors.redAccent,
               onTap: () {
-                // TODO: Navigator push koro Favourite screen-e
-                print("Navigate to Favourites");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MyFavouriteScreen())
+                );
               },
             ),
 
-            // Watch List Tile
+            //Watch List
             _buildMenuTile(
               Icons.history,
               "Watch List",
               Colors.blueAccent,
               onTap: () {
-                // TODO: Navigator push koro Watchlist screen-e
-                print("Navigate to Watchlist");
               },
             ),
 
