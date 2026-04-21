@@ -15,7 +15,6 @@ class MovieDetailsScreen extends StatefulWidget {
 
 class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
   final DatabaseService _dbService = DatabaseService();
-
   bool isFav = false;
   bool isWatch = false;
 
@@ -25,7 +24,6 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
     _loadStatus();
   }
 
-  // Initial status
   void _loadStatus() async {
     bool favStatus = await _dbService.isFavourite(widget.movie.id);
     bool watchStatus = await _dbService.isInWatchlist(widget.movie.id);
@@ -44,7 +42,6 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
       backgroundColor: const Color(0xFF0F1115),
       body: CustomScrollView(
         slivers: [
-          // Poster image
           SliverAppBar(
             expandedHeight: 500,
             backgroundColor: const Color(0xFF0F1115),
@@ -54,11 +51,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
               child: CircleAvatar(
                 backgroundColor: Colors.black.withOpacity(0.5),
                 child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
@@ -70,8 +63,6 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
               ),
             ),
           ),
-
-          // Movie details
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(20.0),
@@ -87,7 +78,6 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                     ),
                   ),
                   const SizedBox(height: 10),
-
                   Row(
                     children: [
                       const Icon(Icons.star, color: Colors.amber, size: 20),
@@ -103,9 +93,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 25),
-
                   Row(
                     children: [
                       Expanded(
@@ -122,13 +110,10 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                                       VideoPlayerScreen(videoId: trailerKey),
                                 ),
                               );
-                            }
-                            else {
+                            } else {
                               if (!context.mounted) return;
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Trailer not found"),
-                                ),
+                                const SnackBar(content: Text("Trailer not found")),
                               );
                             }
                           },
@@ -139,10 +124,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                               borderRadius: BorderRadius.circular(15),
                             ),
                           ),
-                          icon: const Icon(
-                            Icons.play_arrow,
-                            color: Colors.white,
-                          ),
+                          icon: const Icon(Icons.play_arrow, color: Colors.white),
                           label: const Text(
                             "Play Trailer",
                             style: TextStyle(
@@ -153,36 +135,26 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                         ),
                       ),
                       const SizedBox(width: 15),
-
-                      // Favourite Button
                       _buildActionButton(
                         icon: isFav ? Icons.favorite : Icons.favorite_border,
                         iconColor: isFav ? Colors.redAccent : Colors.white,
                         onTap: () async {
                           await _dbService.toggleFavourite(widget.movie);
-                          setState(() {
-                            isFav = !isFav;
-                          });
+                          setState(() => isFav = !isFav);
                         },
                       ),
                       const SizedBox(width: 15),
-
-                      // Watchlist
                       _buildActionButton(
                         icon: isWatch ? Icons.bookmark : Icons.bookmark_border,
                         iconColor: isWatch ? Colors.blueAccent : Colors.white,
                         onTap: () async {
                           await _dbService.toggleWatchlist(widget.movie);
-                          setState(() {
-                            isWatch = !isWatch;
-                          });
+                          setState(() => isWatch = !isWatch);
                         },
                       ),
                     ],
                   ),
-
                   const SizedBox(height: 30),
-
                   const Text(
                     "Storyline",
                     style: TextStyle(
@@ -200,7 +172,78 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       height: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 100),
+                  const SizedBox(height: 30),
+                  const Text(
+                    "Cast",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  FutureBuilder<List<MovieModel>>(
+                    future: ApiService().getCast(widget.movie.id),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(color: Colors.redAccent),
+                        );
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Text(
+                          "No cast info available",
+                          style: TextStyle(color: Colors.white70),
+                        );
+                      }
+                      final cast = snapshot.data!;
+                      return SizedBox(
+                        height: 160,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: cast.length,
+                          itemBuilder: (context, index) {
+                            final actor = cast[index];
+                            return Container(
+                              width: 100,
+                              margin: const EdgeInsets.only(right: 15),
+                              child: Column(
+                                children: [
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: NetworkImage(actor.posterUrl),
+                                    backgroundColor: Colors.grey[900],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    actor.title, // Actor Name from your model
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                  Text(
+                                    actor.overview, // Character Name from your model
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: Colors.white54,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 50),
                 ],
               ),
             ),
@@ -221,7 +264,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
       child: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.1),
+          color: Colors.white.withOpacity(0.1),
           borderRadius: BorderRadius.circular(15),
         ),
         child: Icon(icon, color: iconColor, size: 26),
