@@ -93,7 +93,7 @@ class _MovieDetailsScreenState extends State<MovieDetailsScreen> {
                       const Icon(Icons.star, color: Colors.amber, size: 20),
                       const SizedBox(width: 5),
                       Text(
-                        "${widget.movie.rating}/10",
+                        "${double.parse(widget.movie.rating.toString()).toStringAsFixed(1)}/10",
                         style: const TextStyle(color: Colors.white70),
                       ),
                       const SizedBox(width: 20),

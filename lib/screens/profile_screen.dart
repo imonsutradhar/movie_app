@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:movie_server_app/screens/my_favourite_screen.dart';
+import 'package:movie_server_app/screens/watch_history_screen.dart';
 import 'package:movie_server_app/services/database_service.dart';
 import '../services/auth_service.dart';
 import 'login_screen.dart';
@@ -114,6 +115,10 @@ class ProfileScreen extends StatelessWidget {
               "Watch List",
               Colors.blueAccent,
               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WatchHistoryScreen()),
+                );
               },
             ),
 

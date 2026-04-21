@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/custom_input.dart';
 import 'signup_screen.dart';
@@ -106,7 +107,44 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 35),
 
                 ElevatedButton(
-                  onPressed: _isLoading ? null : _handleLogin,
+                  onPressed: _isLoading ? null : () async {
+                    String email = emailController.text.trim();
+                    String password = passwordController.text.trim();
+
+                    setState(() => _isLoading = true);
+                    try {
+                      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
+                      if (userCredential.user!.emailVerified) {
+                        if (mounted) {
+                          setState(() => _isLoading = false);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => MainWrapper()),
+                          );
+                        }
+                        else {
+                          await FirebaseAuth.instance.signOut();
+                          if (mounted) {
+                            setState(() => _isLoading = false);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content: Text("Please verify your email"),
+                                backgroundColor: Colors.orange,
+                              ),
+                            );
+                          }
+                        }
+                      }
+                    }
+                    catch (e) {
+                      if (mounted) {
+                        setState(() => _isLoading = false);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Error: ${e.toString()}")),
+                        );
+                      }
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent,
                     minimumSize: const Size(double.infinity, 55),

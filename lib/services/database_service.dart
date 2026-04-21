@@ -26,18 +26,15 @@ class DatabaseService {
     }
   }
 
-  // Check if movie is Favourite
   Future<bool> isFavourite(int movieId) async {
     DocumentSnapshot doc = await _db.collection('users').doc(uid).collection('favourites').doc(movieId.toString()).get();
     return doc.exists;
   }
-  // Favourite Count Stream
+
   Stream<int> getFavouriteCount() {
     return _db.collection('users').doc(uid).collection('favourites').snapshots().map((snap) => snap.docs.length);
   }
 
-
-  // Toggle Watchlist
   Future<void> toggleWatchlist(MovieModel movie) async {
     DocumentReference docRef = _db.collection('users').doc(uid).collection('watchlist').doc(movie.id.toString());
     DocumentSnapshot doc = await docRef.get();

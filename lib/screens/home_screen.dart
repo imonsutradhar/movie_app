@@ -38,7 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // --- Tomar Original Boro Poster (Hero Section) ---
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -97,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const Icon(Icons.star, color: Colors.amber, size: 20),
                                 const SizedBox(width: 5),
                                 Text(
-                                  movies[0].rating,
+                                  double.parse(movies[0].rating.toString()).toStringAsFixed(1),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontWeight: FontWeight.bold,

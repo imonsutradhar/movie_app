@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../widgets/custom_input.dart';
 import '../services/auth_service.dart';
@@ -18,15 +19,16 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
 
   void _handleSignUp() async {
-    String name = nameController.text.trim();
-    String email = emailController.text.trim();
-    String password = passwordController.text.trim();
+    final String name = nameController.text.trim();
+    final String email = emailController.text.trim();
+    final String password = passwordController.text.trim();
 
     if(name.isEmpty || email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Please fill all fields!")),
       );
       return;
+
     }
     if (password.length <6) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -110,7 +112,32 @@ class _SignupScreenState extends State<SignupScreen> {
                     ],
                   ),
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleSignUp,
+                    onPressed: _isLoading ? null : () async {
+                      final String email = emailController.text.trim();
+                      final String password = passwordController.text.trim();
+                      setState(() => _isLoading = true);
+
+                      try {
+                        UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: password);
+                        await userCredential.user!.sendEmailVerification();
+                        await FirebaseAuth.instance.signOut();
+
+                        if (mounted) {
+                          setState(() => _isLoading = false);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Verify your email")),
+                          );
+                        }
+                      }
+                      catch (e) {
+                        if (mounted) {
+                          setState(() => _isLoading = false);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())),
+                          );
+                        }
+                      }
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.redAccent,
                       shape: RoundedRectangleBorder(

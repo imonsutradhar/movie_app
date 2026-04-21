@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/movie_model.dart';
 import 'movie_details_screen.dart';
 
-class MyFavouriteScreen extends StatelessWidget {
-  const MyFavouriteScreen({super.key});
+class WatchHistoryScreen extends StatelessWidget {
+  const WatchHistoryScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +18,7 @@ class MyFavouriteScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: Colors.white),
         surfaceTintColor: Colors.transparent,
         title: Text(
-          "My Favourites",
+          "My Watch List",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         leading: IconButton(
@@ -31,7 +31,7 @@ class MyFavouriteScreen extends StatelessWidget {
           stream: FirebaseFirestore.instance
               .collection('users')
               .doc(uid)
-              .collection('favourites')
+              .collection('watchlist')
               .orderBy('addedAt', descending: true)
               .snapshots(),
           builder: (context, snapshot) {
@@ -42,11 +42,11 @@ class MyFavouriteScreen extends StatelessWidget {
             }
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
               return const Center(
-                child: Text("No favourites yet!", style: TextStyle(color: Colors.white54, fontSize: 16)),
+                child: Text("No movies in watch list!", style: TextStyle(color: Colors.white54, fontSize: 16)),
               );
             }
             final favMovies = snapshot.data!.docs;
-        
+
             return GridView.builder(
               padding: const EdgeInsets.all(15),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -63,7 +63,7 @@ class MyFavouriteScreen extends StatelessWidget {
                   if (data['rating'] != null) {
                     ratingString = data['rating'].toString();
                   }
-        
+
                   MovieModel movie = MovieModel(
                       title: data['title'] ?? "Unknown",
                       posterUrl: data['posterUrl'] ?? '',
@@ -74,7 +74,7 @@ class MyFavouriteScreen extends StatelessWidget {
                       id: data['id'],
                       genreIds: data['genreIds'] is List ? List<int>.from(data['genreIds']) : [],
                   );
-        
+
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
