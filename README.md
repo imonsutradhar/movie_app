@@ -61,10 +61,6 @@
   - **Auth:** Email/Password & Google Sign-In
   - **Database:** Cloud Firestore
 - **Data Source:** [TMDB API](https://www.themoviedb.org/)
-- **Logic Highlights:**
-  - `FutureBuilder` & `StreamBuilder` for asynchronous data handling.
-  - Custom `DatabaseService` for Firestore toggle logic.
-  - Precise rating formatting using `toStringAsFixed(1)`.
 
 ---
 
